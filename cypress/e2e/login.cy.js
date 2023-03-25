@@ -1,14 +1,13 @@
 import loginPage from "../support/pages/login/index";
 import shaversPage from "../support/pages/shavers";
+import data from "../fixtures/users-login.json";
 
 describe("Login", () => {
     context("When submitting log in credentials", () => {
-        it("Should be able to successfully log in", () => {
-            const user = {
-                name: "Fernando",
-                email: "fernando@mail.com",
-                password: "pwd123",
-            };
+        it.only("Should be able to successfully log in", () => {
+            const user = data.success;
+
+            cy.createUser(user)
 
             loginPage.submit(user.email, user.password);
 
@@ -16,12 +15,7 @@ describe("Login", () => {
         });
 
         it("Should not be able to log in with incorrect password", () => {
-            const user = {
-                name: "Fernando",
-                email: "fernando@mail.com",
-                password: "pwd123456",
-            };
-
+            const user = data.invpass;
             loginPage.submit(user.email, user.password);
 
             const message =
@@ -31,12 +25,7 @@ describe("Login", () => {
         });
 
         it("Should not be able to log in with not signed email", () => {
-            const user = {
-                name: "Fernando",
-                email: "fernando@404.com",
-                password: "pwd123456",
-            };
-
+            const user = data.email404;
             loginPage.submit(user.email, user.password);
 
             const message =
@@ -55,9 +44,7 @@ describe("Login", () => {
     });
 
     context("Short password", () => {
-        const passwords = ["1", "12", "123", "1234", "12345"];
-
-        passwords.forEach((p) => {
+        data.shortpass.forEach((p) => {
             it(`Should not be able to log in with password: ${p} `, () => {
                 loginPage.submit("papito@teste.com.br", p);
                 loginPage.alertShouldBe("Pelo menos 6 caracteres");
@@ -66,19 +53,8 @@ describe("Login", () => {
     });
 
     context("Incorrect emails", () => {
-        const emails = [
-            "fernando&mail.com",
-            "fernando.com.br",
-            "@gmail.com",
-            "@",
-            "fernando@",
-            "123123",
-            "$@#!$@#",
-            "xpt12345",
-        ];
-
-        emails.forEach((e) => {
-            it.only(`Should not be able to log in with incorrect email: ${e} `, () => {
+        data.invemails.forEach((e) => {
+            it(`Should not be able to log in with incorrect email: ${e} `, () => {
                 loginPage.submit(e, "pwd123");
                 loginPage.alertShouldBe("Informe um email válido");
             });
