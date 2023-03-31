@@ -4,7 +4,7 @@ import data from "../fixtures/users-login.json";
 
 describe("Login", () => {
     context("When submitting log in credentials", () => {
-        it.only("Should be able to successfully log in", () => {
+        it("Should be able to successfully log in", () => {
             const user = data.success;
 
             cy.createUser(user)
