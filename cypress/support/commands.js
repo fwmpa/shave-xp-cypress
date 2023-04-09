@@ -27,12 +27,7 @@ import loginPage from "../support/pages/login/index";
 import shaversPage from "../support/pages/shavers";
 
 Cypress.Commands.add("createUser", (user) => {
-    // cy.request({
-    //     method: "DELETE",
-    //     url: "http://localhost:3001/user/" + user.email
-    // }).then(function (response) {
-    //     expect(response.status).to.eq(204);
-    // });
+    cy.log(JSON.stringify(user))
 
     cy.request({
         method: "POST",
@@ -40,6 +35,15 @@ Cypress.Commands.add("createUser", (user) => {
         body: user,
     }).then(function (response) {
         expect(response.status).to.eq(201);
+    });
+});
+
+Cypress.Commands.add("deleteUser", (user) => {
+    cy.request({
+        method: "DELETE",
+        url: "http://localhost:3001/user/" + user.email,
+    }).then(function (response) {
+        expect(response.status).to.eq(204);
     });
 });
 
@@ -74,13 +78,13 @@ Cypress.Commands.add("apiLogin", (user) => {
         method: "POST",
         url: "http://localhost:3333/sessions",
         body: { email: user.email, password: user.password },
-    }).then(response => {
-        expect(response.status).to.eql(200)
+    }).then((response) => {
+        expect(response.status).to.eql(200);
 
-        const {user, token} = response.body
+        const { user, token } = response.body;
 
-        window.localStorage.setItem('@ShaveXP:token', token)
-        window.localStorage.setItem('@ShaveXP:user', JSON.stringify(user))
-    })
-    cy.visit('/')
+        window.localStorage.setItem("@ShaveXP:token", token);
+        window.localStorage.setItem("@ShaveXP:user", JSON.stringify(user));
+    });
+    cy.visit("/");
 });
