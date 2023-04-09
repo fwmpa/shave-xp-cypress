@@ -1,9 +1,4 @@
-import fpPage from "../support/pages/forgot-pass";
-import rpPage from "../support/pages/reset-pass";
-import loginPage from '../support/pages/login'
-import shaversPage from '../support/pages/shavers'
-
-describe("Password recovery", () => {
+describe("Recovery Password", () => {
     it("Should be able to request new password", () => {
         const user = {
             name: "Joao Esquecido",
@@ -14,12 +9,11 @@ describe("Password recovery", () => {
 
         cy.createUser(user);
 
-        fpPage.go();
-        fpPage.submit(user.email);
+        cy.requestPassword(user.email);
 
         const message =
             "Enviamos um e-mail para confirmar a recuperação de senha, verifique sua caixa de entrada.";
-        fpPage.noticeShouldBe(message);
+        cy.noticeSuccessShouldBe(message);
     });
 
     context("When user requests password recovery", () => {
@@ -36,17 +30,15 @@ describe("Password recovery", () => {
         });
 
         it("Should be able to add new password", () => {
-            rpPage.go(Cypress.env("token"));
-            rpPage.submit('abc123', 'abc123')
-            
-            const message = 'Agora você já pode logar com a sua nova senha secreta.'
-            
-            rpPage.noticeShouldBe(message)
+            cy.resetPassword(Cypress.env("token"), "abc123", "abc123");
+            const message =
+                "Agora você já pode logar com a sua nova senha secreta.";
+            cy.noticeSuccessShouldBe(message);
         });
 
         afterEach(() => {
-            loginPage.submit(user.email, 'abc123')
-            shaversPage.header.userShouldBeLoggedIn(user.name)
+            cy.submitLogin(user.email, "abc123");
+            cy.userShouldBeLoggedIn(user.name);
         });
     });
 });
